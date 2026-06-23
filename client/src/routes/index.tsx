@@ -56,6 +56,11 @@ const loadAdminUsersView = () =>
     Component: m.default,
   }));
 
+const loadAdminUsageView = () =>
+  import('~/components/Admin/Usage').then((m) => ({
+    Component: m.default,
+  }));
+
 const loadProjectWorkspace = () =>
   import('~/components/Projects').then((m) => ({
     Component: m.ProjectWorkspace,
@@ -151,6 +156,10 @@ export const router = createBrowserRouter(
             {
               path: 'admin/users',
               lazy: loadAdminUsersView,
+            },
+            {
+              path: 'admin/usage',
+              lazy: loadAdminUsageView,
             },
             {
               path: 'prompts',

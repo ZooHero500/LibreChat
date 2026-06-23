@@ -142,6 +142,48 @@ const AdminUsersButton = memo(function AdminUsersButton({ expanded }: { expanded
   return expanded ? content : <TooltipAnchor side="right" description={label} render={content} />;
 });
 
+const AdminUsageButton = memo(function AdminUsageButton({ expanded }: { expanded: boolean }) {
+  const localize = useLocalize();
+  const navigate = useNavigate();
+  const location = useLocation();
+  const { user } = useAuthContext();
+  const isActive = location.pathname === '/admin/usage';
+
+  const handleClick = useCallback(
+    (e: React.MouseEvent<HTMLAnchorElement>) => {
+      if (e.button === 0 && !e.ctrlKey && !e.metaKey) {
+        e.preventDefault();
+        navigate('/admin/usage');
+      }
+    },
+    [navigate],
+  );
+
+  if (user?.role !== SystemRoles.ADMIN) {
+    return null;
+  }
+
+  const label = localize('com_ui_admin_usage');
+  const content = (
+    <a
+      href="/admin/usage"
+      data-testid="admin-usage-button"
+      aria-label={label}
+      className={cn(
+        'flex h-9 items-center rounded-lg transition-colors hover:bg-surface-hover',
+        expanded ? 'w-full gap-2 px-2' : 'w-9 justify-center',
+        isActive ? 'bg-surface-active-alt text-text-primary' : 'text-text-primary',
+      )}
+      onClick={handleClick}
+    >
+      <ShieldCheck className="h-5 w-5 flex-shrink-0" aria-hidden="true" />
+      {expanded && <span className="truncate text-sm">{label}</span>}
+    </a>
+  );
+
+  return expanded ? content : <TooltipAnchor side="right" description={label} render={content} />;
+});
+
 const NavIconButton = memo(function NavIconButton({
   link,
   isActive,
@@ -246,6 +288,7 @@ function ExpandedPanel({
       <NewChatButton setActive={setActive} expanded={expanded} />
       <DrawButton expanded={expanded} />
       <AdminUsersButton expanded={expanded} />
+      <AdminUsageButton expanded={expanded} />
       <div className="mx-2 border-b border-border-light" />
       <div className="flex flex-col gap-1 overflow-y-auto">
         {links.map((link) => (
