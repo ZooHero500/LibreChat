@@ -5,7 +5,7 @@ endpoints:
   custom:
     - name: 'APImart'
       apiKey: '${APIMART_KEY}'
-      baseURL: 'http://apimart-adapter:8000/v1'
+      baseURL: '${APIMART_BASE_URL}'
       models:
         default:
           - 'claude-opus-4-8'
