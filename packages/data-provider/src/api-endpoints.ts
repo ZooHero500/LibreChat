@@ -326,6 +326,16 @@ export const imageGenJob = (jobId: string) =>
   `${BASE_URL}/api/image-gen/generate/${encodeURIComponent(jobId)}`;
 export const imageGenHistory = () => `${BASE_URL}/api/image-gen/history`;
 
+export const adminUsers = (limit?: number, offset?: number) => {
+  const qs = new URLSearchParams();
+  if (limit != null) qs.set('limit', String(limit));
+  if (offset != null) qs.set('offset', String(offset));
+  const query = qs.toString();
+  return `${BASE_URL}/api/admin/users${query ? `?${query}` : ''}`;
+};
+export const adminUserById = (id: string) => `${BASE_URL}/api/admin/users/${encodeURIComponent(id)}`;
+export const adminUserDisabled = (id: string) => `${adminUserById(id)}/disabled`;
+
 export const speech = () => `${files()}/speech`;
 
 export const speechToText = () => `${speech()}/stt`;

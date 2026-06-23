@@ -12,6 +12,7 @@ import * as q from './types/queries';
 import * as sk from './types/skills';
 import * as f from './types/files';
 import * as img from './types/images';
+import * as adm from './types/admin';
 import * as config from './config';
 import request from './request';
 import * as s from './schemas';
@@ -1394,4 +1395,29 @@ export const getImageGenJob = (jobId: string): Promise<img.ImageGenJobStatus> =>
 
 export const getImageGenHistory = (): Promise<img.ImageGenHistoryResponse> => {
   return request.get(endpoints.imageGenHistory());
+};
+
+/* Admin user management */
+export const listAdminUsers = (
+  limit?: number,
+  offset?: number,
+): Promise<adm.TAdminUsersResponse> => {
+  return request.get(endpoints.adminUsers(limit, offset));
+};
+
+export const createAdminUser = (
+  data: adm.TCreateAdminUser,
+): Promise<{ message: string }> => {
+  return request.post(endpoints.adminUsers(), data);
+};
+
+export const setAdminUserDisabled = (
+  id: string,
+  disabled: boolean,
+): Promise<{ message: string; disabled: boolean }> => {
+  return request.patch(endpoints.adminUserDisabled(id), { disabled });
+};
+
+export const deleteAdminUser = (id: string): Promise<{ message: string }> => {
+  return request.delete(endpoints.adminUserById(id));
 };

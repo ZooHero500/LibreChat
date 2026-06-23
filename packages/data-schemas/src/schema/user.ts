@@ -65,6 +65,11 @@ const userSchema: Schema<IUser> = new Schema<IUser>(
       type: String,
       default: SystemRoles.USER,
     },
+    /** When true, the account is disabled and cannot log in (admin-controlled). */
+    disabled: {
+      type: Boolean,
+      default: false,
+    },
     googleId: {
       type: String,
     },

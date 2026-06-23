@@ -51,6 +51,11 @@ const loadImageGenView = () =>
     Component: m.default,
   }));
 
+const loadAdminUsersView = () =>
+  import('~/components/Admin/Users').then((m) => ({
+    Component: m.default,
+  }));
+
 const loadProjectWorkspace = () =>
   import('~/components/Projects').then((m) => ({
     Component: m.ProjectWorkspace,
@@ -142,6 +147,10 @@ export const router = createBrowserRouter(
             {
               path: 'draw',
               lazy: loadImageGenView,
+            },
+            {
+              path: 'admin/users',
+              lazy: loadAdminUsersView,
             },
             {
               path: 'prompts',

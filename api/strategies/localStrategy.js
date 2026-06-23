@@ -43,6 +43,11 @@ async function passportLogin(req, email, password, done) {
       return done(null, false, { message: 'Incorrect password.' });
     }
 
+    if (user.disabled) {
+      logger.error(`[Login] [Login failed - account disabled] [Username: ${email}] [Request-IP: ${req.ip}]`);
+      return done(null, false, { message: 'Account is disabled.' });
+    }
+
     const emailEnabled = checkEmailConfig();
     const userCreatedAtTimestamp = Math.floor(new Date(user.createdAt).getTime() / 1000);
 

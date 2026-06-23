@@ -88,6 +88,8 @@ export enum QueryKeys {
   /* Built-in image generation studio */
   imageGenModels = 'imageGenModels',
   imageGenHistory = 'imageGenHistory',
+  /* Admin user management */
+  adminUsers = 'adminUsers',
 }
 
 // Dynamic query keys that require parameters

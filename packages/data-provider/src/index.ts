@@ -24,6 +24,7 @@ export * from './types/agents';
 export * from './types/assistants';
 export * from './types/files';
 export * from './types/images';
+export * from './types/admin';
 export * from './types/mcpServers';
 export * from './types/mutations';
 export * from './types/queries';

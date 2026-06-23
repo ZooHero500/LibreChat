@@ -20,6 +20,7 @@ export interface IUser extends Document {
   avatar?: string;
   provider: string;
   role?: string;
+  disabled?: boolean;
   googleId?: string;
   facebookId?: string;
   openidId?: string;
