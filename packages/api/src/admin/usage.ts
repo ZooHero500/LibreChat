@@ -38,7 +38,10 @@ function parseRange(query: ServerRequest['query']): ParsedRange | { error: strin
     return { error: 'Invalid userId format' };
   }
 
-  const endDate = rawEnd ? new Date(rawEnd) : new Date();
+  let endDate = rawEnd ? new Date(rawEnd) : new Date();
+  if (rawEnd && /^\d{4}-\d{2}-\d{2}$/.test(rawEnd) && !isNaN(endDate.getTime())) {
+    endDate.setUTCHours(23, 59, 59, 999);
+  }
   const startDate = rawStart
     ? new Date(rawStart)
     : new Date(endDate.getTime() - DEFAULT_RANGE_DAYS * 24 * 60 * 60 * 1000);

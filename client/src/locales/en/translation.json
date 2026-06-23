@@ -962,6 +962,7 @@
   "com_ui_admin_usage_all_users": "All users",
   "com_ui_admin_usage_completion_tokens": "Completion tokens",
   "com_ui_admin_usage_empty": "No usage in this range",
+  "com_ui_admin_usage_error": "Failed to load usage statistics",
   "com_ui_admin_usage_end_date": "End date",
   "com_ui_admin_usage_grand_total": "Grand total",
   "com_ui_admin_usage_model": "Model",

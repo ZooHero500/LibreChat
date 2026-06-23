@@ -59,4 +59,26 @@ describe('createAdminUsageHandlers.getUsage', () => {
     await handlers.getUsage(req, res);
     expect(res._status).toBe(400);
   });
+
+  it('normalises date-only endDate to end-of-day UTC so the final day is included', async () => {
+    let capturedFilter: unknown;
+    const getUsageByUserModel = jest.fn(async (filter: unknown) => {
+      capturedFilter = filter;
+      return [];
+    });
+    const handlers = createAdminUsageHandlers(
+      deps({ getUsageByUserModel, getUsageTimeseries: jest.fn(async () => []) }),
+    );
+    const req = {
+      query: { startDate: '2026-06-01', endDate: '2026-06-23' },
+    } as unknown as ServerRequest;
+    const res = mockRes();
+    await handlers.getUsage(req, res);
+    expect(res._status).toBe(200);
+    const { endDate } = capturedFilter as { endDate: Date };
+    expect(endDate.getUTCHours()).toBe(23);
+    expect(endDate.getUTCMinutes()).toBe(59);
+    expect(endDate.getUTCSeconds()).toBe(59);
+    expect(endDate.getUTCMilliseconds()).toBe(999);
+  });
 });

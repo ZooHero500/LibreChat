@@ -90,7 +90,7 @@ export default function AdminUsageView() {
       {isLoading ? (
         <div className="py-8 text-center text-text-secondary">…</div>
       ) : isError ? (
-        <div className="py-8 text-center text-text-secondary">{localize('com_ui_admin_usage_empty')}</div>
+        <div className="py-8 text-center text-text-secondary">{localize('com_ui_admin_usage_error')}</div>
       ) : rows.length === 0 ? (
         <div className="py-8 text-center text-text-secondary">{localize('com_ui_admin_usage_empty')}</div>
       ) : (

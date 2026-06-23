@@ -2,7 +2,7 @@ import { memo, useCallback, lazy, Suspense } from 'react';
 import { useQueryClient } from '@tanstack/react-query';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useRecoilValue } from 'recoil';
-import { SquarePen, Sparkles, ShieldCheck } from 'lucide-react';
+import { SquarePen, Sparkles, ShieldCheck, BarChart3 } from 'lucide-react';
 import { SystemRoles } from 'librechat-data-provider';
 import { QueryKeys } from 'librechat-data-provider';
 import { Skeleton, Sidebar, Button, TooltipAnchor } from '@librechat/client';
@@ -176,7 +176,7 @@ const AdminUsageButton = memo(function AdminUsageButton({ expanded }: { expanded
       )}
       onClick={handleClick}
     >
-      <ShieldCheck className="h-5 w-5 flex-shrink-0" aria-hidden="true" />
+      <BarChart3 className="h-5 w-5 flex-shrink-0" aria-hidden="true" />
       {expanded && <span className="truncate text-sm">{label}</span>}
     </a>
   );

@@ -50,4 +50,15 @@ describe('AdminUsageView', () => {
     render(<AdminUsageView />);
     expect(screen.getByText('No usage in this range')).toBeInTheDocument();
   });
+
+  it('renders error state with distinct error message, not empty-state copy', () => {
+    useAdminUsage.mockReturnValue({
+      isLoading: false,
+      isError: true,
+      data: undefined,
+    });
+    render(<AdminUsageView />);
+    expect(screen.getByText('Failed to load usage statistics')).toBeInTheDocument();
+    expect(screen.queryByText('No usage in this range')).not.toBeInTheDocument();
+  });
 });
