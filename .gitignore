@@ -183,3 +183,7 @@ CLAUDE.md
 # YunYi deploy: 跟踪 deploy/yunyi 下的脱敏配置(无密钥)
 !deploy/yunyi/librechat.yaml
 !deploy/yunyi/docker-compose.override.yml
+
+# Python 字节码缓存
+__pycache__/
+*.pyc
