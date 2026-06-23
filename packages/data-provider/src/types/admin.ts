@@ -25,3 +25,37 @@ export type TCreateAdminUser = {
   password: string;
   role?: string;
 };
+
+export type TAdminUsageParams = {
+  startDate?: string;
+  endDate?: string;
+  userId?: string;
+};
+
+export type TAdminUsageRow = {
+  userId: string;
+  userName: string;
+  userEmail: string;
+  model: string;
+  promptTokens: number;
+  completionTokens: number;
+  totalTokens: number;
+};
+
+export type TAdminUsageModelTotal = {
+  model: string;
+  totalTokens: number;
+};
+
+export type TAdminUsageTimeseriesPoint = {
+  date: string;
+  totalTokens: number;
+};
+
+export type TAdminUsageResponse = {
+  rows: TAdminUsageRow[];
+  perModelTotals: TAdminUsageModelTotal[];
+  grandTotal: number;
+  timeseries: TAdminUsageTimeseriesPoint[];
+  range: { startDate: string; endDate: string };
+};

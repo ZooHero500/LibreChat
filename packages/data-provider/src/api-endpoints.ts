@@ -335,6 +335,24 @@ export const adminUsers = (limit?: number, offset?: number) => {
 };
 export const adminUserById = (id: string) => `${BASE_URL}/api/admin/users/${encodeURIComponent(id)}`;
 export const adminUserDisabled = (id: string) => `${adminUserById(id)}/disabled`;
+export const adminUsage = (params?: {
+  startDate?: string;
+  endDate?: string;
+  userId?: string;
+}) => {
+  const query = new URLSearchParams();
+  if (params?.startDate) {
+    query.set('startDate', params.startDate);
+  }
+  if (params?.endDate) {
+    query.set('endDate', params.endDate);
+  }
+  if (params?.userId) {
+    query.set('userId', params.userId);
+  }
+  const qs = query.toString();
+  return `${BASE_URL}/api/admin/usage${qs ? `?${qs}` : ''}`;
+};
 
 export const speech = () => `${files()}/speech`;
 

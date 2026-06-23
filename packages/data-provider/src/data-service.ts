@@ -1421,3 +1421,9 @@ export const setAdminUserDisabled = (
 export const deleteAdminUser = (id: string): Promise<{ message: string }> => {
   return request.delete(endpoints.adminUserById(id));
 };
+
+export const getAdminUsage = (
+  params?: adm.TAdminUsageParams,
+): Promise<adm.TAdminUsageResponse> => {
+  return request.get(endpoints.adminUsage(params));
+};

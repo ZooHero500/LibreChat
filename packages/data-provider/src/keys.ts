@@ -90,6 +90,7 @@ export enum QueryKeys {
   imageGenHistory = 'imageGenHistory',
   /* Admin user management */
   adminUsers = 'adminUsers',
+  adminUsage = 'adminUsage',
 }
 
 // Dynamic query keys that require parameters
