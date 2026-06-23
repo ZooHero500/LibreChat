@@ -1,6 +1,10 @@
 version: 1.3.13
 cache: true
 
+# 文件存储:S3 兼容对象存储(Railway Bucket / R2 等),凭据读自 .env 的 AWS_* 变量
+# 图片/上传持久化,api 无状态。本地 docker-compose 想用本地盘就改回 'local'。
+fileStrategy: 's3'
+
 endpoints:
   custom:
     - name: 'APImart'
