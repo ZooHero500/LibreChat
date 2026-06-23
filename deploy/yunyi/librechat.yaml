@@ -111,5 +111,6 @@ memory:
   personalize: true
   messageWindowSize: 5
   agent:
+    enabled: true
     provider: 'DeepSeek'
     model: 'deepseek-v4-flash'
