@@ -1,6 +1,6 @@
 import httpx, json, os
 UA={"User-Agent":"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0 Safari/537.36"}
-c=httpx.Client(base_url="http://api:3080", timeout=40, headers=UA)
+c=httpx.Client(base_url=os.environ.get("LIBRECHAT_URL","http://api:3080"), timeout=40, headers=UA)
 tok=c.post("/api/auth/login", json={"email":os.environ.get("ADMIN_EMAIL","admin@yunyi.com"),"password":os.environ["ADMIN_PASSWORD"]}).json()["token"]
 H={"Authorization":f"Bearer {tok}"}
 
