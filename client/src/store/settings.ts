@@ -63,7 +63,7 @@ const localStorageAtoms = {
   decibelValue: atomWithLocalStorage('decibelValue', -45),
   autoSendText: atomWithLocalStorage('autoSendText', -1),
 
-  textToSpeech: atomWithLocalStorage('textToSpeech', true),
+  textToSpeech: atomWithLocalStorage('textToSpeech', false),
   engineTTS: atomWithLocalStorage('engineTTS', 'browser'),
   voice: atomWithLocalStorage<string | undefined>('voice', undefined),
   cloudBrowserVoices: atomWithLocalStorage('cloudBrowserVoices', false),

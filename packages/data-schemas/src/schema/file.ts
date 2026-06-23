@@ -115,6 +115,9 @@ const file: Schema<IMongoFile> = new Schema(
     model: {
       type: String,
     },
+    prompt: {
+      type: String,
+    },
     width: Number,
     height: Number,
     metadata: {

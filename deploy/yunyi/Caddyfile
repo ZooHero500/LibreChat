@@ -1,0 +1,15 @@
+{
+    email ttvnacbfl04@hotmail.com
+}
+chat.essjoy.com {
+    reverse_proxy api:3080 {
+        # 把 LibreChat 所有 Set-Cookie 的作用域改写到父域，保证跨子域单点登录稳定
+        header_down Set-Cookie "(.+)" "${1}; Domain=.essjoy.com"
+    }
+}
+draw.essjoy.com {
+    reverse_proxy apimart-studio:8000
+}
+app.essjoy.com {
+    reverse_proxy apimart-studio:8000
+}

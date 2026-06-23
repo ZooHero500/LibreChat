@@ -11,6 +11,7 @@ import * as ag from './types/agents';
 import * as q from './types/queries';
 import * as sk from './types/skills';
 import * as f from './types/files';
+import * as img from './types/images';
 import * as config from './config';
 import request from './request';
 import * as s from './schemas';
@@ -1376,4 +1377,21 @@ export interface ActiveJobsResponse {
 
 export const getActiveJobs = (): Promise<ActiveJobsResponse> => {
   return request.get(endpoints.activeJobs());
+};
+
+/* Built-in image generation studio */
+export const getImageGenModels = (): Promise<img.ImageGenModelsResponse> => {
+  return request.get(endpoints.imageGenModels());
+};
+
+export const generateImage = (payload: img.ImageGenRequest): Promise<img.ImageGenJobResponse> => {
+  return request.post(endpoints.imageGenGenerate(), payload);
+};
+
+export const getImageGenJob = (jobId: string): Promise<img.ImageGenJobStatus> => {
+  return request.get(endpoints.imageGenJob(jobId));
+};
+
+export const getImageGenHistory = (): Promise<img.ImageGenHistoryResponse> => {
+  return request.get(endpoints.imageGenHistory());
 };

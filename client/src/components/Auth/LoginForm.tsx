@@ -18,14 +18,26 @@ type TLoginFormProps = {
 const LoginForm: React.FC<TLoginFormProps> = ({ onSubmit, startupConfig, error, setError }) => {
   const localize = useLocalize();
   const { theme } = useContext(ThemeContext);
+  const rememberedEmail =
+    typeof localStorage !== 'undefined' ? localStorage.getItem('rememberedEmail') : null;
   const {
     register,
     getValues,
     handleSubmit,
     formState: { errors, isSubmitting },
-  } = useForm<TLoginUser>();
+  } = useForm<TLoginUser>({ defaultValues: { email: rememberedEmail ?? '' } });
   const [showResendLink, setShowResendLink] = useState<boolean>(false);
   const [turnstileToken, setTurnstileToken] = useState<string | null>(null);
+  const [rememberMe, setRememberMe] = useState<boolean>(!!rememberedEmail);
+
+  const handleFormSubmit = (data: TLoginUser) => {
+    if (rememberMe) {
+      localStorage.setItem('rememberedEmail', data.email);
+    } else {
+      localStorage.removeItem('rememberedEmail');
+    }
+    onSubmit(data);
+  };
 
   const { data: config } = useGetStartupConfig();
   const useUsernameLogin = config?.ldap?.username;
@@ -92,7 +104,7 @@ const LoginForm: React.FC<TLoginFormProps> = ({ onSubmit, startupConfig, error, 
         className="mt-6"
         aria-label="Login form"
         method="POST"
-        onSubmit={handleSubmit((data) => onSubmit(data))}
+        onSubmit={handleSubmit(handleFormSubmit)}
       >
         <div className="mb-4">
           <div className="relative">
@@ -145,14 +157,29 @@ const LoginForm: React.FC<TLoginFormProps> = ({ onSubmit, startupConfig, error, 
           </div>
           {renderError('password')}
         </div>
-        {startupConfig.passwordResetEnabled && (
-          <a
-            href="/forgot-password"
-            className="inline-flex p-1 text-sm font-medium text-green-600 underline decoration-transparent transition-all duration-200 hover:text-green-700 hover:decoration-green-700 focus:text-green-700 focus:decoration-green-700 dark:text-green-500 dark:hover:text-green-400 dark:hover:decoration-green-400 dark:focus:text-green-400 dark:focus:decoration-green-400"
+        <div className="mt-1 flex items-center justify-between">
+          <label
+            htmlFor="rememberMe"
+            className="flex cursor-pointer items-center gap-2 p-1 text-sm text-text-secondary"
           >
-            {localize('com_auth_password_forgot')}
-          </a>
-        )}
+            <input
+              type="checkbox"
+              id="rememberMe"
+              checked={rememberMe}
+              onChange={(e) => setRememberMe(e.target.checked)}
+              className="h-4 w-4 rounded border-border-medium accent-green-600"
+            />
+            {localize('com_auth_remember_me')}
+          </label>
+          {startupConfig.passwordResetEnabled && (
+            <a
+              href="/forgot-password"
+              className="inline-flex p-1 text-sm font-medium text-green-600 underline decoration-transparent transition-all duration-200 hover:text-green-700 hover:decoration-green-700 focus:text-green-700 focus:decoration-green-700 dark:text-green-500 dark:hover:text-green-400 dark:hover:decoration-green-400 dark:focus:text-green-400 dark:focus:decoration-green-400"
+            >
+              {localize('com_auth_password_forgot')}
+            </a>
+          )}
+        </div>
 
         {requireCaptcha && (
           <div className="my-4 flex justify-center">

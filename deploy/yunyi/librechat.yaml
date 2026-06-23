@@ -1,0 +1,103 @@
+version: 1.3.13
+cache: true
+
+endpoints:
+  custom:
+    - name: 'APImart'
+      apiKey: '${APIMART_KEY}'
+      baseURL: 'http://apimart-adapter:8000/v1'
+      models:
+        default:
+          - 'claude-opus-4-8'
+          - 'gpt-5.5'
+          - 'gemini-3.1-flash-image-preview'
+          - 'gpt-image-2'
+          - 'grok-imagine-1.5-apimart'
+        fetch: false
+      titleConvo: true
+      titleModel: 'gpt-5.5'
+      modelDisplayLabel: 'APImart'
+
+    - name: 'DeepSeek'
+      apiKey: '${DEEPSEEK_API_KEY}'
+      baseURL: 'https://api.deepseek.com'
+      models:
+        default:
+          - 'deepseek-v4-pro'
+          - 'deepseek-v4-flash'
+        fetch: false
+      titleConvo: true
+      titleModel: 'deepseek-v4-flash'
+      modelDisplayLabel: 'DeepSeek'
+
+    - name: 'OpenRouter'
+      apiKey: '${OPENROUTER_API_KEY}'
+      baseURL: 'https://openrouter.ai/api/v1'
+      models:
+        default:
+          - 'x-ai/grok-4.3'
+        fetch: false
+      titleConvo: true
+      titleModel: 'x-ai/grok-4.3'
+      modelDisplayLabel: 'OpenRouter'
+
+# 全部模型都列为 spec（否则选择器只显示 spec）；默认 DeepSeek V4 Pro
+modelSpecs:
+  enforce: false
+  prioritize: true
+  list:
+    - name: 'deepseek-v4-pro'
+      label: 'DeepSeek V4 Pro'
+      default: true
+      group: 'DeepSeek'
+      preset:
+        endpoint: 'DeepSeek'
+        model: 'deepseek-v4-pro'
+    - name: 'deepseek-v4-flash'
+      label: 'DeepSeek V4 Flash'
+      group: 'DeepSeek'
+      preset:
+        endpoint: 'DeepSeek'
+        model: 'deepseek-v4-flash'
+    - name: 'claude-opus-4-8'
+      label: 'Claude Opus 4.8'
+      group: 'APImart'
+      preset:
+        endpoint: 'APImart'
+        model: 'claude-opus-4-8'
+    - name: 'gpt-5-5'
+      label: 'GPT-5.5'
+      group: 'APImart'
+      preset:
+        endpoint: 'APImart'
+        model: 'gpt-5.5'
+    - name: 'gemini-image'
+      label: 'Gemini 3.1 Flash 绘图'
+      group: 'APImart'
+      preset:
+        endpoint: 'APImart'
+        model: 'gemini-3.1-flash-image-preview'
+    - name: 'gpt-image-2'
+      label: 'GPT-Image-2 绘图'
+      group: 'APImart'
+      preset:
+        endpoint: 'APImart'
+        model: 'gpt-image-2'
+    - name: 'grok-imagine'
+      label: 'Grok Imagine 绘图'
+      group: 'APImart'
+      preset:
+        endpoint: 'APImart'
+        model: 'grok-imagine-1.5-apimart'
+    - name: 'grok-4-3'
+      label: 'Grok 4.3'
+      group: 'OpenRouter'
+      preset:
+        endpoint: 'OpenRouter'
+        model: 'x-ai/grok-4.3'
+
+# 联网搜索：Tavily(搜索+抓取)+ Jina(重排)。密钥读自 .env 的 TAVILY_API_KEY / JINA_API_KEY
+webSearch:
+  searchProvider: 'tavily'
+  scraperProvider: 'tavily'
+  rerankerType: 'jina'

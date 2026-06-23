@@ -170,3 +170,19 @@ Multi-line imports count total character length across all lines. Consolidate va
 ## Formatting
 
 Fix all formatting lint errors (trailing spaces, tabs, newlines, indentation) using auto-fix when available. All TypeScript/ESLint warnings and errors **must** be resolved.
+
+---
+
+# YunYi 部署 (essjoy AI 平台)
+
+本 fork 部署成 essjoy 电商团队的自托管 AI 平台。完整部署文档见 **`deploy/yunyi/README.md`**。
+
+**架构**:统一门户 `app.essjoy.com` + 对话 `chat.essjoy.com`(LibreChat)+ 生图 `draw.essjoy.com`(自建 `apimart-studio`)。Caddy 自动 HTTPS 反代;`apimart-adapter` 把 apimart 异步图像接口包装成 OpenAI 兼容 chat;单点登录通过把会话 Cookie 写到 `.essjoy.com` 实现。服务器 Vultr `149.28.152.211`,运行目录 `/root/librechat`,密钥只在服务器 `.env`(不入库)。
+
+**自定义产物**:`deploy/yunyi/`(override/librechat.yaml/Caddyfile/adapter/studio/脚本)+ `skill/`(8 个电商技能)。
+
+**改动时务必注意(踩过的坑)**:
+1. 调 LibreChat API 必须带浏览器 `User-Agent`,否则被 `uaParser` 拦为 `Illegal request`。
+2. 自定义模型 id 不要和 LibreChat 内置 `aiModels` 撞名(会被路由到 Responses API / 点亮多余服务商);撞名时在 `apimart-adapter` 用 `apimart-` 前缀别名映射。
+3. 改 `librechat.yaml` 要 `docker compose restart api`(`up -d` 不重载 bind mount)。
+4. 模型/端点配置在 `deploy/yunyi/librechat.yaml`,生图/门户后端在 `deploy/yunyi/apimart-studio/app.py`。

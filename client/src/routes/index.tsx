@@ -46,6 +46,11 @@ const loadProjectsView = () =>
     Component: m.ProjectsView,
   }));
 
+const loadImageGenView = () =>
+  import('~/components/ImageGen').then((m) => ({
+    Component: m.default,
+  }));
+
 const loadProjectWorkspace = () =>
   import('~/components/Projects').then((m) => ({
     Component: m.ProjectWorkspace,
@@ -133,6 +138,10 @@ export const router = createBrowserRouter(
             {
               path: 'search',
               element: <Search />,
+            },
+            {
+              path: 'draw',
+              lazy: loadImageGenView,
             },
             {
               path: 'prompts',

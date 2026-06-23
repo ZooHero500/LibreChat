@@ -179,3 +179,7 @@ claude-flow
 hive-mind-prompt-*.txt
 CLAUDE.md
 .gsd
+
+# YunYi deploy: 跟踪 deploy/yunyi 下的脱敏配置(无密钥)
+!deploy/yunyi/librechat.yaml
+!deploy/yunyi/docker-compose.override.yml

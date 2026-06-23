@@ -1,0 +1,54 @@
+# YunYi (essjoy AI 平台) docker compose 覆盖文件
+# 与上游 docker-compose.yml 叠加使用；密钥从同目录 .env 注入（见 .env.example）。
+# 部署时把本文件 + librechat.yaml + Caddyfile + .env 放到服务器项目目录后：
+#   docker compose up -d
+services:
+  # 挂载 LibreChat 配置
+  api:
+    volumes:
+      - ./librechat.yaml:/app/librechat.yaml
+      - ./skill:/app/skill
+
+  # apimart 适配层：把 apimart 异步图像接口包装成 OpenAI 兼容 chat（对话/Gemini 透传，gpt-image-2/grok 拦截轮询）
+  apimart-adapter:
+    build: ./apimart-adapter
+    image: apimart-adapter
+    container_name: apimart-adapter
+    restart: always
+    healthcheck:
+      test: ['CMD', 'python', '-c', "import urllib.request,sys; sys.exit(0 if urllib.request.urlopen('http://localhost:8000/health').status==200 else 1)"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+  # 生图工作台 + 统一门户(app.essjoy.com)，复用同一个 MongoDB 校验账号，单点登录把会话 Cookie 写到 .essjoy.com
+  apimart-studio:
+    build: ./apimart-studio
+    image: apimart-studio
+    container_name: apimart-studio
+    restart: always
+    depends_on:
+      - mongodb
+    environment:
+      - APIMART_KEY=${APIMART_KEY}
+      - MONGO_URI=mongodb://mongodb:27017/LibreChat
+      - COOKIE_DOMAIN=${COOKIE_DOMAIN:-.essjoy.com}
+      - LIBRECHAT_INTERNAL=http://api:3080
+      - STUDIO_SECRET=${STUDIO_SECRET}
+    volumes:
+      - ./studio-data:/data
+    ports:
+      - "8080:8000"
+
+  # Caddy：自动 HTTPS 反代(chat/draw/app)，并把 chat 的 Set-Cookie 作用域改写到 .essjoy.com
+  caddy:
+    image: caddy:2
+    container_name: caddy
+    restart: always
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile
+      - ./caddy-data:/data
+      - ./caddy-config:/config

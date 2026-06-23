@@ -85,6 +85,9 @@ export enum QueryKeys {
   skillStates = 'skillStates',
   /* General user favorites */
   favorites = 'favorites',
+  /* Built-in image generation studio */
+  imageGenModels = 'imageGenModels',
+  imageGenHistory = 'imageGenHistory',
 }
 
 // Dynamic query keys that require parameters

@@ -60,6 +60,8 @@ export interface IMongoFile extends Omit<Document, 'model'> {
   usage: number;
   source: string;
   model?: string;
+  /** Text prompt used to generate the file, set for image-generation outputs. */
+  prompt?: string;
   width?: number;
   height?: number;
   metadata?: {

@@ -36,10 +36,12 @@ const keys = require('./keys');
 const user = require('./user');
 const mcp = require('./mcp');
 const rum = require('./rum');
+const imageGen = require('./imageGen');
 
 module.exports = {
   rum,
   mcp,
+  imageGen,
   auth,
   adminAuth,
   adminConfig,

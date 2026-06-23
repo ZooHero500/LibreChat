@@ -320,6 +320,12 @@ export const images = () => `${files()}/images`;
 
 export const avatar = () => `${images()}/avatar`;
 
+export const imageGenModels = () => `${BASE_URL}/api/image-gen/models`;
+export const imageGenGenerate = () => `${BASE_URL}/api/image-gen/generate`;
+export const imageGenJob = (jobId: string) =>
+  `${BASE_URL}/api/image-gen/generate/${encodeURIComponent(jobId)}`;
+export const imageGenHistory = () => `${BASE_URL}/api/image-gen/history`;
+
 export const speech = () => `${files()}/speech`;
 
 export const speechToText = () => `${speech()}/stt`;
