@@ -105,3 +105,11 @@ webSearch:
   searchProvider: 'tavily'
   scraperProvider: 'tavily'
   rerankerType: 'jina'
+
+# 记忆:让助手跨对话记住用户偏好。用 DeepSeek Flash 做记忆抽取(便宜)。
+memory:
+  personalize: true
+  messageWindowSize: 5
+  agent:
+    provider: 'DeepSeek'
+    model: 'deepseek-v4-flash'
