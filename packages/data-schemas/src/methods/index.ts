@@ -60,7 +60,13 @@ import {
   premiumTokenValues,
   defaultRate,
 } from './tx';
-import { createTransactionMethods, type TransactionMethods } from './transaction';
+import {
+  createTransactionMethods,
+  type TransactionMethods,
+  type UsageStatsFilter,
+  type UsageByUserModel,
+  type UsageTimeseriesPoint,
+} from './transaction';
 import { createSpendTokensMethods, type SpendTokensMethods } from './spendTokens';
 import { createPromptMethods, type PromptMethods, type PromptDeps } from './prompt';
 import {
@@ -310,6 +316,9 @@ export type {
   ChatProjectMethods,
   TxMethods,
   TransactionMethods,
+  UsageStatsFilter,
+  UsageByUserModel,
+  UsageTimeseriesPoint,
   SpendTokensMethods,
   PromptMethods,
   SkillMethods,

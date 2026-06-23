@@ -3,6 +3,24 @@ import type { IBalance, IBalanceUpdate, TransactionData } from '~/types';
 import type { ITransaction } from '~/schema/transaction';
 import logger from '~/config/winston';
 
+export interface UsageStatsFilter {
+  startDate: Date;
+  endDate: Date;
+  userId?: string;
+}
+
+export interface UsageByUserModel {
+  userId: string;
+  model: string;
+  promptTokens: number;
+  completionTokens: number;
+}
+
+export interface UsageTimeseriesPoint {
+  date: string;
+  totalTokens: number;
+}
+
 const cancelRate = 1.15;
 
 type MultiplierParams = {
@@ -99,6 +117,8 @@ export function createTransactionMethods(
     | undefined
   >;
   createStructuredTransaction: (_txData: TxData) => Promise<TransactionResult | undefined>;
+  getUsageByUserModel: (filter: UsageStatsFilter) => Promise<UsageByUserModel[]>;
+  getUsageTimeseries: (filter: UsageStatsFilter) => Promise<UsageTimeseriesPoint[]>;
 } {
   /** Calculate and set the tokenValue for a transaction */
   function calculateTokenValue(txn: InternalTxDoc) {
@@ -466,6 +486,57 @@ export function createTransactionMethods(
     }
   }
 
+  function buildUsageMatch(filter: UsageStatsFilter): FilterQuery<ITransaction> {
+    const match: FilterQuery<ITransaction> = {
+      tokenType: { $in: ['prompt', 'completion'] },
+      createdAt: { $gte: filter.startDate, $lte: filter.endDate },
+    };
+    if (filter.userId) {
+      match.user = new mongoose.Types.ObjectId(filter.userId);
+    }
+    return match;
+  }
+
+  async function getUsageByUserModel(filter: UsageStatsFilter): Promise<UsageByUserModel[]> {
+    const Transaction = mongoose.models.Transaction;
+    const absAmount = { $abs: { $ifNull: ['$rawAmount', 0] } };
+    const rows = await Transaction.aggregate([
+      { $match: buildUsageMatch(filter) },
+      {
+        $group: {
+          _id: { user: '$user', model: '$model' },
+          promptTokens: {
+            $sum: { $cond: [{ $eq: ['$tokenType', 'prompt'] }, absAmount, 0] },
+          },
+          completionTokens: {
+            $sum: { $cond: [{ $eq: ['$tokenType', 'completion'] }, absAmount, 0] },
+          },
+        },
+      },
+    ]);
+    return rows.map((r) => ({
+      userId: r._id.user ? r._id.user.toString() : '',
+      model: r._id.model ?? 'unknown',
+      promptTokens: r.promptTokens,
+      completionTokens: r.completionTokens,
+    }));
+  }
+
+  async function getUsageTimeseries(filter: UsageStatsFilter): Promise<UsageTimeseriesPoint[]> {
+    const Transaction = mongoose.models.Transaction;
+    const points = await Transaction.aggregate([
+      { $match: buildUsageMatch(filter) },
+      {
+        $group: {
+          _id: { $dateToString: { format: '%Y-%m-%d', date: '$createdAt' } },
+          totalTokens: { $sum: { $abs: { $ifNull: ['$rawAmount', 0] } } },
+        },
+      },
+      { $sort: { _id: 1 } },
+    ]);
+    return points.map((p) => ({ date: p._id, totalTokens: p.totalTokens }));
+  }
+
   return {
     updateBalance,
     bulkInsertTransactions,
@@ -477,6 +548,8 @@ export function createTransactionMethods(
     createTransaction,
     createAutoRefillTransaction,
     createStructuredTransaction,
+    getUsageByUserModel,
+    getUsageTimeseries,
   };
 }
 
