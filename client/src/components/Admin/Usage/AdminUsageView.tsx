@@ -26,7 +26,8 @@ export default function AdminUsageView() {
   const rows = data?.rows ?? [];
 
   return (
-    <div className="mx-auto w-full max-w-6xl p-4">
+    <div className="flex h-full w-full flex-col overflow-y-auto bg-presentation">
+      <div className="mx-auto w-full max-w-6xl p-4 md:p-6">
       <h1 className="mb-1 text-xl font-semibold text-text-primary">
         {localize('com_ui_admin_usage')}
       </h1>
@@ -117,6 +118,7 @@ export default function AdminUsageView() {
           </tbody>
         </table>
       )}
+      </div>
     </div>
   );
 }
