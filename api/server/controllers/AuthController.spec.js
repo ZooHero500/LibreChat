@@ -839,4 +839,41 @@ describe('refreshController – LibreChat path', () => {
       },
     });
   });
+
+  it('skips a stale duplicate refreshToken cookie and uses the valid one', async () => {
+    getUserById.mockResolvedValue({
+      toObject: () => ({ _id: 'local-user-id', email: 'local@example.com' }),
+    });
+    const staleToken = jwt.sign({ id: 'local-user-id' }, 'old-deployment-secret', {
+      expiresIn: '1h',
+    });
+    const validToken = jwt.sign({ id: 'local-user-id' }, refreshSecret, { expiresIn: '1h' });
+    req.headers.cookie = `token_provider=librechat; refreshToken=${staleToken}; refreshToken=${validToken}`;
+
+    await refreshController(req, res);
+
+    expect(findSession).toHaveBeenCalledWith(
+      { userId: 'local-user-id', refreshToken: validToken },
+      { lean: false },
+    );
+    expect(res.status).toHaveBeenCalledWith(200);
+    expect(res.send.mock.calls[0][0]).toEqual({
+      token: 'local-app-token',
+      user: { _id: 'local-user-id', email: 'local@example.com' },
+    });
+  });
+
+  it('returns 403 when every refreshToken cookie fails verification', async () => {
+    const staleToken = jwt.sign({ id: 'local-user-id' }, 'old-deployment-secret', {
+      expiresIn: '1h',
+    });
+    req.headers.cookie = `refreshToken=${staleToken}`;
+
+    await refreshController(req, res);
+
+    expect(getUserById).not.toHaveBeenCalled();
+    expect(findSession).not.toHaveBeenCalled();
+    expect(res.status).toHaveBeenCalledWith(403);
+    expect(res.send).toHaveBeenCalledWith('Invalid refresh token');
+  });
 });

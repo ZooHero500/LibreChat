@@ -152,6 +152,34 @@ const resetPasswordController = async (req, res) => {
   }
 };
 
+/**
+ * Extracts every `refreshToken` value from a raw Cookie header.
+ * Browsers may send duplicate cookies (e.g. a stale parent-domain cookie left by a
+ * previous deployment alongside the current host-only one); the standard parser keeps
+ * only the first occurrence, which can be the stale value that fails verification.
+ */
+const getRefreshTokenCandidates = (cookieHeader) => {
+  if (!cookieHeader) {
+    return [];
+  }
+
+  const candidates = [];
+  for (const part of cookieHeader.split(';')) {
+    const separatorIndex = part.indexOf('=');
+    if (separatorIndex === -1) {
+      continue;
+    }
+    if (part.slice(0, separatorIndex).trim() !== 'refreshToken') {
+      continue;
+    }
+    const value = part.slice(separatorIndex + 1).trim();
+    if (value) {
+      candidates.push(decodeURIComponent(value));
+    }
+  }
+  return candidates;
+};
+
 const refreshController = async (req, res) => {
   const parsedCookies = req.headers.cookie ? cookies.parse(req.headers.cookie) : {};
   const token_provider = parsedCookies.token_provider;
@@ -255,14 +283,35 @@ const refreshController = async (req, res) => {
     }
   }
 
-  /** For non-OpenID users, read refresh token from cookies */
-  const refreshToken = parsedCookies.refreshToken;
-  if (!refreshToken) {
+  /**
+   * For non-OpenID users, read refresh token from cookies. A browser may carry
+   * duplicate `refreshToken` cookies (e.g. a stale parent-domain cookie left by a
+   * previous deployment alongside the current host-only one), so verify each
+   * candidate and use the first one that passes signature verification.
+   */
+  const refreshTokenCandidates = getRefreshTokenCandidates(req.headers.cookie);
+  if (refreshTokenCandidates.length === 0) {
     return res.status(200).send('Refresh token not provided');
   }
 
+  let refreshToken;
+  let payload;
+  for (const candidate of refreshTokenCandidates) {
+    try {
+      payload = jwt.verify(candidate, process.env.JWT_REFRESH_SECRET);
+      refreshToken = candidate;
+      break;
+    } catch {
+      payload = undefined;
+    }
+  }
+
+  if (!refreshToken) {
+    logger.error('[refreshController] Invalid refresh token: invalid signature');
+    return res.status(403).send('Invalid refresh token');
+  }
+
   try {
-    const payload = jwt.verify(refreshToken, process.env.JWT_REFRESH_SECRET);
     const user = await getUserById(payload.id, AUTH_REFRESH_USER_PROJECTION);
     if (!user) {
       return res.status(401).redirect('/login');
@@ -297,7 +346,7 @@ const refreshController = async (req, res) => {
       res.status(401).send('Refresh token expired or not found for this user');
     }
   } catch (err) {
-    logger.error(`[refreshController] Invalid refresh token:`, err);
+    logger.error('[refreshController] Error refreshing session:', err);
     res.status(403).send('Invalid refresh token');
   }
 };
